@@ -1,0 +1,43 @@
+{
+  "precision": 0.6727,
+  "recall": 0.7708,
+  "f1_score": 0.7184,
+  "roc_auc": 0.8873,
+  "confusion_matrix": [
+    [
+      97,
+      18
+    ],
+    [
+      11,
+      37
+    ]
+  ],
+  "n_train": 487,
+  "n_test": 163,
+  "feature_importances": {
+    "attendance_rate": 0.0884,
+    "gpa": 0.0721,
+    "previous_gpa": 0.1171,
+    "gpa_change": 0.0365,
+    "assignment_completion_rate": 0.4386,
+    "late_submissions_count": 0.0554,
+    "library_visits_monthly": 0.0537,
+    "lms_login_frequency_weekly": 0.038,
+    "failed_courses_count": 0.031,
+    "tuition_fee_delinquent": 0.0298,
+    "semester": 0.0132,
+    "department_Business Administration": 0.0045,
+    "department_Computer Science": 0.0029,
+    "department_Data Science": 0.0004,
+    "department_Electrical Engineering": 0.0003,
+    "department_Humanities & Social Sciences": 0.0017,
+    "department_Mechanical Engineering": 0.004,
+    "financial_aid_status_Aid Suspended": 0.0027,
+    "financial_aid_status_No Aid": 0.0018,
+    "financial_aid_status_Pending Application": 0.0031,
+    "financial_aid_status_Receiving Aid": 0.0049
+  },
+  "model_type": "Gradient Boosting Classifier",
+  "training_date": "2026-10-09"
+}
