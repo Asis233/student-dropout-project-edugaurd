@@ -9,7 +9,7 @@ import plotly.graph_objects as go
 
 import database
 import ml_engine
-from style import apply_custom_css, render_top_header, render_metric_card, render_risk_pill
+from style import apply_custom_css, render_top_header, render_metric_card, render_risk_pill, apply_plotly_theme
 
 # Page configuration
 st.set_page_config(
@@ -67,10 +67,10 @@ with st.sidebar:
 
     st.markdown("---")
     st.markdown("""
-    <div style="padding: 10px; background: #F8F7FC; border-radius: 8px; border: 1px solid #ECEAF2; font-size: 11px; color: #77798B;">
-        <strong>Model Status:</strong> Active<br>
-        <strong>Algorithm:</strong> Gradient Boosting<br>
-        <strong>Lead Warning:</strong> 2-3 Months
+    <div style="padding: 12px; background: #F4F2FA; border-radius: 10px; border: 1px solid #E2DEF0; font-size: 12px; color: #1E1F2D;">
+        <strong style="color: #1E1F2D;">Model Status:</strong> <span style="color: #166534; font-weight:700;">Active</span><br>
+        <strong style="color: #1E1F2D;">Algorithm:</strong> Gradient Boosting<br>
+        <strong style="color: #1E1F2D;">Lead Warning:</strong> 2-3 Months
     </div>
     """, unsafe_allow_html=True)
 
@@ -125,20 +125,16 @@ if page == "Overview":
         fig_line = px.line(
             trend_df, x="Month", y="Count", color="Risk Category",
             color_discrete_map={
-                "Low Risk": "#4CAF50",
-                "Medium Risk": "#FFB74D",
-                "High Risk": "#E57373"
+                "Low Risk": "#16A34A",
+                "Medium Risk": "#D97706",
+                "High Risk": "#DC2626"
             },
             markers=True,
             height=280
         )
+        fig_line = apply_plotly_theme(fig_line, height=280)
         fig_line.update_layout(
-            margin=dict(l=10, r=10, t=10, b=10),
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)",
-            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-            xaxis=dict(showgrid=True, gridcolor="#ECEAF2"),
-            yaxis=dict(showgrid=True, gridcolor="#ECEAF2")
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
         )
         st.plotly_chart(fig_line, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
@@ -159,18 +155,20 @@ if page == "Overview":
             color='Risk Level',
             color_discrete_map={
                 "Low": "#DDF3E4",
-                "Medium": "#FFF4D2",
+                "Medium": "#FEF08A",
                 "High": "#FCE6DA"
             },
             hole=0.55,
             height=280
         )
-        fig_donut.update_traces(textposition='inside', textinfo='percent+label', marker=dict(line=dict(color='#ECEAF2', width=1)))
-        fig_donut.update_layout(
-            margin=dict(l=10, r=10, t=10, b=10),
-            paper_bgcolor="rgba(0,0,0,0)",
-            showlegend=False
+        fig_donut = apply_plotly_theme(fig_donut, height=280)
+        fig_donut.update_traces(
+            textposition='inside',
+            textinfo='percent+label',
+            textfont=dict(color='#1E1F2D', size=13),
+            marker=dict(line=dict(color='#ECEAF2', width=1))
         )
+        fig_donut.update_layout(showlegend=False)
         st.plotly_chart(fig_donut, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
@@ -191,16 +189,11 @@ if page == "Overview":
 
         fig_bar = px.bar(
             factors_data, y="Risk Factor", x="Affected Students", orientation="h",
-            color_discrete_sequence=["#DCD6F7"],
+            color_discrete_sequence=["#5C54E5"],
             height=260
         )
-        fig_bar.update_layout(
-            margin=dict(l=10, r=10, t=10, b=10),
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)",
-            xaxis=dict(showgrid=True, gridcolor="#ECEAF2"),
-            yaxis=dict(showgrid=False)
-        )
+        fig_bar = apply_plotly_theme(fig_bar, height=260)
+        fig_bar.update_layout(yaxis=dict(showgrid=False))
         st.plotly_chart(fig_bar, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
@@ -214,10 +207,10 @@ if page == "Overview":
         high_risk_sample = students_df[students_df['risk_level'] == 'High'].head(4)
         for _, s in high_risk_sample.iterrows():
             st.markdown(f"""
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #F8F7FC; border-radius: 8px; margin-bottom: 8px; border: 1px solid #ECEAF2;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #F8F7FC; border-radius: 10px; margin-bottom: 8px; border: 1px solid #ECEAF2;">
                 <div>
-                    <div style="font-weight: 600; font-size: 13px;">{s['name']} <span style="font-size: 11px; color: #77798B;">({s['student_id']})</span></div>
-                    <div style="font-size: 11px; color: #77798B;">{s['department']} • Semester {s['semester']} • Att: {s['attendance_rate']}%</div>
+                    <div style="font-weight: 700; font-size: 14px; color: #1E1F2D;">{s['name']} <span style="font-size: 12px; color: #4B4C63;">({s['student_id']})</span></div>
+                    <div style="font-size: 12px; font-weight: 500; color: #4B4C63;">{s['department']} • Semester {s['semester']} • Att: {s['attendance_rate']}%</div>
                 </div>
                 <div>
                     <span class="badge-pill badge-high">{int(s['risk_probability']*100)}% Risk</span>
@@ -258,7 +251,6 @@ elif page == "Students":
                     df_upload = pd.read_csv(uploaded_file)
                     st.success(f"Loaded {len(df_upload)} records. Processing ML risk prediction...")
                     
-                    # Predict risk for uploaded records if not present
                     processed_rows = []
                     for _, row in df_upload.iterrows():
                         r_dict = row.to_dict()
@@ -346,21 +338,21 @@ elif page == "Students":
         
         c1, c2, c3, c4, c5, c6 = st.columns([2, 3, 3, 2, 3, 2])
         with c1:
-            st.markdown(f"**{row['student_id']}**")
+            st.markdown(f"<span style='color: #1E1F2D; font-weight: 700;'>{row['student_id']}</span>", unsafe_allow_html=True)
         with c2:
-            st.markdown(f"**{row['name']}**")
+            st.markdown(f"<span style='color: #1E1F2D; font-weight: 700;'>{row['name']}</span>", unsafe_allow_html=True)
         with c3:
-            st.markdown(f"{row['department']} (Sem {row['semester']})")
+            st.markdown(f"<span style='color: #4B4C63; font-weight: 500;'>{row['department']} (Sem {row['semester']})</span>", unsafe_allow_html=True)
         with c4:
-            st.markdown(f"Att: **{row['attendance_rate']}%** | GPA: **{row['gpa']}**")
+            st.markdown(f"<span style='color: #1E1F2D;'>Att: <strong>{row['attendance_rate']}%</strong> | GPA: <strong>{row['gpa']}</strong></span>", unsafe_allow_html=True)
         with c5:
-            st.markdown(render_risk_pill(risk_level) + f" **({int(prob*100)}%)**", unsafe_allow_html=True)
+            st.markdown(render_risk_pill(risk_level) + f" <strong style='color: #1E1F2D;'>({int(prob*100)}%)</strong>", unsafe_allow_html=True)
         with c6:
             if st.button("View Details", key=f"btn_view_{s_id}"):
                 st.session_state.selected_student_id = s_id
                 st.session_state.nav_page = "Individual Profile"
                 st.rerun()
-        st.markdown("<hr style='margin: 4px 0; border: 0; border-top: 1px solid #ECEAF2;'>", unsafe_allow_html=True)
+        st.markdown("<hr style='margin: 6px 0; border: 0; border-top: 1px solid #ECEAF2;'>", unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
 # PAGE 3: INDIVIDUAL STUDENT PROFILE
@@ -396,9 +388,9 @@ elif page == "Individual Profile":
             <div class="eduguard-card">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <h2 style="margin:0; font-size: 20px; color: #34354A;">{student['name']}</h2>
-                        <div style="font-size: 13px; color: #77798B; margin-top: 4px;">
-                            ID: <strong>{student['student_id']}</strong> • Department: <strong>{student['department']}</strong> • Semester: <strong>{student['semester']}</strong>
+                        <h2 style="margin:0; font-size: 22px; font-weight: 800; color: #1E1F2D;">{student['name']}</h2>
+                        <div style="font-size: 13px; color: #4B4C63; margin-top: 4px;">
+                            ID: <strong style="color: #1E1F2D;">{student['student_id']}</strong> • Department: <strong style="color: #1E1F2D;">{student['department']}</strong> • Semester: <strong style="color: #1E1F2D;">{student['semester']}</strong>
                         </div>
                     </div>
                     <div>
@@ -422,23 +414,23 @@ elif page == "Individual Profile":
                 fig_gauge = go.Figure(go.Indicator(
                     mode = "gauge+number",
                     value = prob_pct,
-                    number = {'suffix': "%"},
+                    number = {'suffix': "%", 'font': {'color': '#1E1F2D', 'size': 32, 'family': 'Inter'}},
                     domain = {'x': [0, 1], 'y': [0, 1]},
-                    title = {'text': "Dropout Risk Estimate", 'font': {'size': 13, 'color': '#77798B'}},
+                    title = {'text': "Dropout Risk Estimate", 'font': {'size': 13, 'color': '#4B4C63', 'family': 'Inter'}},
                     gauge = {
-                        'axis': {'range': [None, 100], 'tickwidth': 1, 'tickcolor': "#ECEAF2"},
-                        'bar': {'color': "#34354A"},
+                        'axis': {'range': [None, 100], 'tickwidth': 1, 'tickcolor': "#ECEAF2", 'tickfont': {'color': '#1E1F2D'}},
+                        'bar': {'color': "#1E1F2D"},
                         'bgcolor': "white",
                         'borderwidth': 1,
                         'bordercolor': "#ECEAF2",
                         'steps': [
                             {'range': [0, 35], 'color': '#DDF3E4'},
-                            {'range': [35, 60], 'color': '#FFF4D2'},
+                            {'range': [35, 60], 'color': '#FEF08A'},
                             {'range': [60, 100], 'color': '#FCE6DA'}
                         ],
                     }
                 ))
-                fig_gauge.update_layout(height=200, margin=dict(l=20, r=20, t=30, b=20), paper_bgcolor="rgba(0,0,0,0)")
+                fig_gauge = apply_plotly_theme(fig_gauge, height=200)
                 st.plotly_chart(fig_gauge, use_container_width=True)
                 st.markdown("</div>", unsafe_allow_html=True)
 
@@ -473,7 +465,6 @@ elif page == "Individual Profile":
                 att_val = float(student['attendance_rate'])
                 assign_val = float(student['assignment_completion_rate'])
                 
-                # Synthetic trend line moving towards current value
                 att_trend = [min(98.0, att_val + 12), min(98.0, att_val + 8), min(98.0, att_val + 4), min(98.0, att_val + 2), att_val]
                 assign_trend = [min(100.0, assign_val + 15), min(100.0, assign_val + 10), min(100.0, assign_val + 6), min(100.0, assign_val + 2), assign_val]
 
@@ -485,13 +476,11 @@ elif page == "Individual Profile":
 
                 fig_prof_trend = px.line(
                     trend_profile_df, x="Month", y="Percentage", color="Metric",
-                    color_discrete_map={"Attendance Rate": "#4A90E2", "Assignment Completion": "#9B51E0"},
+                    color_discrete_map={"Attendance Rate": "#2563EB", "Assignment Completion": "#9333EA"},
                     markers=True, height=240
                 )
+                fig_prof_trend = apply_plotly_theme(fig_prof_trend, height=240)
                 fig_prof_trend.update_layout(
-                    margin=dict(l=10, r=10, t=10, b=10),
-                    paper_bgcolor="rgba(0,0,0,0)",
-                    plot_bgcolor="rgba(0,0,0,0)",
                     legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
                 )
                 st.plotly_chart(fig_prof_trend, use_container_width=True)
@@ -507,8 +496,8 @@ elif page == "Individual Profile":
                 factors = ml_engine.explain_student_risk(student)
                 for f in factors:
                     st.markdown(f"""
-                    <div style="display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; font-size: 13px; color: #34354A;">
-                        <span style="color: #E57373;">🔹</span>
+                    <div style="display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; font-size: 13px; color: #1E1F2D; font-weight: 500;">
+                        <span style="color: #DC2626;">🔹</span>
                         <div>{f}</div>
                     </div>
                     """, unsafe_allow_html=True)
@@ -528,10 +517,10 @@ elif page == "Individual Profile":
             for i, r in enumerate(recs):
                 with rec_cols[i]:
                     st.markdown(f"""
-                    <div style="background: #F8F7FC; border: 1px solid #ECEAF2; border-radius: 10px; padding: 12px; height: 100%;">
-                        <div style="font-size: 11px; font-weight: 700; color: #77798B; text-transform: uppercase;">{r['category']}</div>
-                        <div style="font-size: 13px; font-weight: 700; color: #34354A; margin: 4px 0;">{r['title']}</div>
-                        <div style="font-size: 12px; color: #77798B;">{r['description']}</div>
+                    <div style="background: #F4F2FA; border: 1px solid #E2DEF0; border-radius: 10px; padding: 14px; height: 100%;">
+                        <div style="font-size: 11px; font-weight: 800; color: #5C54E5; text-transform: uppercase;">{r['category']}</div>
+                        <div style="font-size: 14px; font-weight: 800; color: #1E1F2D; margin: 4px 0;">{r['title']}</div>
+                        <div style="font-size: 12px; color: #4B4C63; font-weight: 500;">{r['description']}</div>
                     </div>
                     """, unsafe_allow_html=True)
 
@@ -590,15 +579,15 @@ elif page == "Risk Analysis":
         for _, s in high_ranked.iterrows():
             c1, c2, c3 = st.columns([6, 3, 3])
             with c1:
-                st.markdown(f"**{s['name']}** (`{s['student_id']}`) • {s['department']}")
+                st.markdown(f"<strong style='color: #1E1F2D;'>{s['name']}</strong> (`{s['student_id']}`) • <span style='color: #4B4C63;'>{s['department']}</span>", unsafe_allow_html=True)
             with c2:
-                st.markdown(render_risk_pill(s['risk_level']) + f" **{int(s['risk_probability']*100)}%**", unsafe_allow_html=True)
+                st.markdown(render_risk_pill(s['risk_level']) + f" <strong style='color: #1E1F2D;'>{int(s['risk_probability']*100)}%</strong>", unsafe_allow_html=True)
             with c3:
                 if st.button("Inspect Profile", key=f"rank_btn_{s['student_id']}"):
                     st.session_state.selected_student_id = s['student_id']
                     st.session_state.nav_page = "Individual Profile"
                     st.rerun()
-            st.markdown("<hr style='margin: 4px 0; border: 0; border-top: 1px solid #ECEAF2;'>", unsafe_allow_html=True)
+            st.markdown("<hr style='margin: 6px 0; border: 0; border-top: 1px solid #ECEAF2;'>", unsafe_allow_html=True)
 
         st.markdown("</div>", unsafe_allow_html=True)
 
@@ -612,14 +601,11 @@ elif page == "Risk Analysis":
         dept_risk = students_df.groupby(['department', 'risk_level']).size().reset_index(name='Count')
         fig_dept = px.bar(
             dept_risk, x="Count", y="department", color="risk_level", orientation="h",
-            color_discrete_map={"Low": "#DDF3E4", "Medium": "#FFF4D2", "High": "#FCE6DA"},
+            color_discrete_map={"Low": "#DDF3E4", "Medium": "#FEF08A", "High": "#FCE6DA"},
             height=300
         )
+        fig_dept = apply_plotly_theme(fig_dept, height=300)
         fig_dept.update_layout(
-            margin=dict(l=10, r=10, t=10, b=10),
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)",
-            xaxis=dict(showgrid=True, gridcolor="#ECEAF2"),
             yaxis=dict(showgrid=False),
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
         )
@@ -641,14 +627,9 @@ elif page == "Risk Analysis":
 
         fig_imp = px.bar(
             imp_df, y="Feature", x="Importance", orientation="h",
-            color_discrete_sequence=["#DCD6F7"], height=280
+            color_discrete_sequence=["#5C54E5"], height=280
         )
-        fig_imp.update_layout(
-            margin=dict(l=10, r=10, t=10, b=10),
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)",
-            xaxis=dict(showgrid=True, gridcolor="#ECEAF2")
-        )
+        fig_imp = apply_plotly_theme(fig_imp, height=280)
         st.plotly_chart(fig_imp, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
@@ -668,7 +649,7 @@ elif page == "Risk Analysis":
             st.metric("F1 Score", f"{metrics['f1_score']}", "Balanced Metric")
 
         st.markdown("""
-        <div style="font-size: 11px; color: #77798B; background: #F8F7FC; padding: 8px; border-radius: 6px; border: 1px solid #ECEAF2; margin-top: 8px;">
+        <div style="font-size: 12px; color: #1E1F2D; background: #F4F2FA; padding: 10px; border-radius: 8px; border: 1px solid #E2DEF0; margin-top: 10px;">
             <strong>Algorithm:</strong> Gradient Boosting Classifier (scikit-learn)<br>
             <strong>Optimization Objective:</strong> Maximize recall for early warning while retaining high precision to avoid alert fatigue.
         </div>
@@ -737,11 +718,11 @@ elif page == "Interventions":
         <div class="eduguard-card">
             <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                 <div>
-                    <div style="font-weight: 700; font-size: 15px; color: #34354A;">{inv['student_name']} <span style="font-size: 12px; color: #77798B;">({inv['student_id']})</span></div>
-                    <div style="font-size: 12px; color: #77798B; margin-top: 2px;">
-                        Type: <strong>{inv['intervention_type']}</strong> • Assigned: <strong>{inv['assigned_counsellor']}</strong> • Target Date: <strong>{inv['follow_up_date']}</strong>
+                    <div style="font-weight: 800; font-size: 16px; color: #1E1F2D;">{inv['student_name']} <span style="font-size: 12px; color: #4B4C63;">({inv['student_id']})</span></div>
+                    <div style="font-size: 13px; color: #4B4C63; margin-top: 2px;">
+                        Type: <strong style="color: #1E1F2D;">{inv['intervention_type']}</strong> • Assigned: <strong style="color: #1E1F2D;">{inv['assigned_counsellor']}</strong> • Target Date: <strong style="color: #1E1F2D;">{inv['follow_up_date']}</strong>
                     </div>
-                    <div style="font-size: 13px; color: #34354A; margin-top: 8px; background: #F8F7FC; padding: 8px 12px; border-radius: 6px; border: 1px solid #ECEAF2;">
+                    <div style="font-size: 13px; color: #1E1F2D; margin-top: 8px; background: #F8F7FC; padding: 10px 14px; border-radius: 8px; border: 1px solid #ECEAF2;">
                         <strong>Notes:</strong> {inv['notes'] if inv['notes'] else 'No additional notes.'}
                     </div>
                 </div>
@@ -752,7 +733,6 @@ elif page == "Interventions":
         </div>
         """, unsafe_allow_html=True)
 
-        # Quick update form inside expander
         with st.expander(f"✏️ Update Status or Log Outcome for Intervention #{inv_id}"):
             with st.form(f"upd_form_{inv_id}"):
                 u_col1, u_col2 = st.columns(2)
@@ -773,7 +753,6 @@ elif page == "Interventions":
 elif page == "Outcome Tracking":
     render_top_header("Outcome Tracking & Retention Evaluation", "Evaluate the post-support academic, attendance, and enrolment trajectory of assisted students.")
 
-    # Attribution Notice
     st.markdown("""
     <div class="eduguard-info">
         ℹ️ <strong>Causal Attribution Notice:</strong> Displayed outcome metrics represent empirical observations of student progress post-intervention. While targeted counselling correlates strongly with student persistence, overall retention is influenced by multiple institutional and personal factors.
@@ -811,14 +790,10 @@ elif page == "Outcome Tracking":
         att_by_type = outcomes_df.groupby('intervention_type')['attendance_change'].mean().reset_index()
         fig_att_out = px.bar(
             att_by_type, x="intervention_type", y="attendance_change",
-            color_discrete_sequence=["#DDF3E4"], height=260
+            color_discrete_sequence=["#22C55E"], height=260
         )
-        fig_att_out.update_layout(
-            margin=dict(l=10, r=10, t=10, b=10),
-            paper_bgcolor="rgba(0,0,0,0)",
-            plot_bgcolor="rgba(0,0,0,0)",
-            xaxis_title="", yaxis_title="Avg Attendance Delta (%)"
-        )
+        fig_att_out = apply_plotly_theme(fig_att_out, height=260)
+        fig_att_out.update_layout(xaxis_title="", yaxis_title="Avg Attendance Delta (%)")
         st.plotly_chart(fig_att_out, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
@@ -837,7 +812,13 @@ elif page == "Outcome Tracking":
             color_discrete_sequence=["#DDF3E4", "#DCEBFA", "#FCE6DA"],
             hole=0.5, height=260
         )
-        fig_prog.update_layout(margin=dict(l=10, r=10, t=10, b=10), paper_bgcolor="rgba(0,0,0,0)")
+        fig_prog = apply_plotly_theme(fig_prog, height=260)
+        fig_prog.update_traces(
+            textposition='inside',
+            textinfo='percent+label',
+            textfont=dict(color='#1E1F2D', size=13),
+            marker=dict(line=dict(color='#ECEAF2', width=1))
+        )
         st.plotly_chart(fig_prog, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
