@@ -136,7 +136,7 @@ if page == "Overview":
         fig_line.update_layout(
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
         )
-        st.plotly_chart(fig_line, use_container_width=True)
+        st.plotly_chart(fig_line, use_container_width=True, config={'displayModeBar': False})
         st.markdown("</div>", unsafe_allow_html=True)
 
     with c2:
@@ -169,7 +169,7 @@ if page == "Overview":
             marker=dict(line=dict(color='#ECEAF2', width=1))
         )
         fig_donut.update_layout(showlegend=False)
-        st.plotly_chart(fig_donut, use_container_width=True)
+        st.plotly_chart(fig_donut, use_container_width=True, config={'displayModeBar': False})
         st.markdown("</div>", unsafe_allow_html=True)
 
     # Row 2: Top Risk Factors Bar Chart & Needs Attention List
@@ -194,7 +194,7 @@ if page == "Overview":
         )
         fig_bar = apply_plotly_theme(fig_bar, height=260)
         fig_bar.update_layout(yaxis=dict(showgrid=False))
-        st.plotly_chart(fig_bar, use_container_width=True)
+        st.plotly_chart(fig_bar, use_container_width=True, config={'displayModeBar': False})
         st.markdown("</div>", unsafe_allow_html=True)
 
     with r2:
@@ -414,11 +414,11 @@ elif page == "Individual Profile":
                 fig_gauge = go.Figure(go.Indicator(
                     mode = "gauge+number",
                     value = prob_pct,
-                    number = {'suffix': "%", 'font': {'color': '#1E1F2D', 'size': 32, 'family': 'Inter'}},
-                    domain = {'x': [0, 1], 'y': [0, 1]},
+                    number = {'suffix': "%", 'font': {'color': '#1E1F2D', 'size': 26, 'family': 'Inter'}},
+                    domain = {'x': [0.1, 0.9], 'y': [0.1, 0.85]},
                     title = {'text': "Dropout Risk Estimate", 'font': {'size': 13, 'color': '#4B4C63', 'family': 'Inter'}},
                     gauge = {
-                        'axis': {'range': [None, 100], 'tickwidth': 1, 'tickcolor': "#ECEAF2", 'tickfont': {'color': '#1E1F2D'}},
+                        'axis': {'range': [0, 100], 'dtick': 50, 'tickwidth': 1, 'tickcolor': "#4B4C63", 'tickfont': {'color': '#1E1F2D', 'size': 11}},
                         'bar': {'color': "#1E1F2D"},
                         'bgcolor': "white",
                         'borderwidth': 1,
@@ -430,8 +430,9 @@ elif page == "Individual Profile":
                         ],
                     }
                 ))
-                fig_gauge = apply_plotly_theme(fig_gauge, height=200)
-                st.plotly_chart(fig_gauge, use_container_width=True)
+                fig_gauge = apply_plotly_theme(fig_gauge, height=250)
+                fig_gauge.update_layout(margin=dict(l=20, r=20, t=40, b=20))
+                st.plotly_chart(fig_gauge, use_container_width=True, config={'displayModeBar': False})
                 st.markdown("</div>", unsafe_allow_html=True)
 
             with g2:
@@ -483,7 +484,7 @@ elif page == "Individual Profile":
                 fig_prof_trend.update_layout(
                     legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
                 )
-                st.plotly_chart(fig_prof_trend, use_container_width=True)
+                st.plotly_chart(fig_prof_trend, use_container_width=True, config={'displayModeBar': False})
                 st.markdown("</div>", unsafe_allow_html=True)
 
             with r2:
@@ -609,7 +610,7 @@ elif page == "Risk Analysis":
             yaxis=dict(showgrid=False),
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
         )
-        st.plotly_chart(fig_dept, use_container_width=True)
+        st.plotly_chart(fig_dept, use_container_width=True, config={'displayModeBar': False})
         st.markdown("</div>", unsafe_allow_html=True)
 
     # Feature Importance & Model Evaluation Metrics
@@ -630,7 +631,7 @@ elif page == "Risk Analysis":
             color_discrete_sequence=["#5C54E5"], height=280
         )
         fig_imp = apply_plotly_theme(fig_imp, height=280)
-        st.plotly_chart(fig_imp, use_container_width=True)
+        st.plotly_chart(fig_imp, use_container_width=True, config={'displayModeBar': False})
         st.markdown("</div>", unsafe_allow_html=True)
 
     with fcol2:
@@ -793,8 +794,7 @@ elif page == "Outcome Tracking":
             color_discrete_sequence=["#22C55E"], height=260
         )
         fig_att_out = apply_plotly_theme(fig_att_out, height=260)
-        fig_att_out.update_layout(xaxis_title="", yaxis_title="Avg Attendance Delta (%)")
-        st.plotly_chart(fig_att_out, use_container_width=True)
+        st.plotly_chart(fig_att_out, use_container_width=True, config={'displayModeBar': False})
         st.markdown("</div>", unsafe_allow_html=True)
 
     with chart_col2:
@@ -819,7 +819,7 @@ elif page == "Outcome Tracking":
             textfont=dict(color='#1E1F2D', size=13),
             marker=dict(line=dict(color='#ECEAF2', width=1))
         )
-        st.plotly_chart(fig_prog, use_container_width=True)
+        st.plotly_chart(fig_prog, use_container_width=True, config={'displayModeBar': False})
         st.markdown("</div>", unsafe_allow_html=True)
 
     # Outcome Records Table

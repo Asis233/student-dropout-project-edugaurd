@@ -291,6 +291,23 @@ def apply_custom_css():
         box-shadow: 0 0 0 2px rgba(92, 84, 229, 0.3) !important;
     }
 
+    /* Streamlit Metric Overrides for Crisp Visibility */
+    div[data-testid="stMetricValue"] div,
+    div[data-testid="stMetricValue"] span,
+    div[data-testid="stMetricValue"] {
+        color: #1E1F2D !important;
+        font-weight: 800 !important;
+        font-size: 24px !important;
+    }
+    div[data-testid="stMetricLabel"] label,
+    div[data-testid="stMetricLabel"] p,
+    div[data-testid="stMetricLabel"] span,
+    div[data-testid="stMetricLabel"] {
+        color: #4B4C63 !important;
+        font-weight: 600 !important;
+        font-size: 13px !important;
+    }
+
     /* Section Heading Styling */
     .section-title {
         font-size: 17px;
